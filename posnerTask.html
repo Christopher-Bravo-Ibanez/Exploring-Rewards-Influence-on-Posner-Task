@@ -1,0 +1,762 @@
+/*****************change color *********************/
+  document.body.style.backgroundColor = '#CDCDCD'
+
+
+/*****************create timeline *********************/
+    var timeline = [];
+
+/******** credit card sizing  ************/
+
+var inputs = {
+  type:'resize',
+  item_width: 3 + 3/8,
+  item_height: 2 + 1/8,
+  prompt: "<p>Click and drag the lower right corner of the box until the box is the same size as a credit card held up to the screen.</p>",
+  pixels_per_unit: 150
+};
+timeline.push(inputs) 
+
+
+    /******* making full screen ************/
+    timeline.push({type: 'fullscreen',
+    fullscreen_mode: true
+  });
+    timeline.push({
+  type: 'html-keyboard-response',
+  stimulus: 'This trial will be in fullscreen mode.'
+});
+
+
+
+/*****random method *********/ 
+function getRandomIntInclusive(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
+}
+
+/*****************creating flanker images with respect to window proportions *********************/
+  var clearRectangle = 'clearRectangle.png'
+  var clearRectangleImg = new Image();
+  clearRectangleImg.src = clearRectangle; 
+  
+  var fixationI = 'fixation.png';
+  var fixationImg = new Image();
+  fixationImg.src = fixationI; 
+
+
+  var leftCongruentI = 'LeftCongruent.png';
+  var LeftCongruentImg = new Image();
+  LeftCongruentImg.src = leftCongruentI; 
+
+  var rightCongruentI = 'RightCongruent.png';
+  var RightCongruentImg = new Image();
+  RightCongruentImg.src = rightCongruentI; 
+
+  var leftIncongruentI = 'LeftIncongruent.png';
+  var LeftIncongruentImg = new Image();
+  LeftIncongruentImg.src = leftIncongruentI; 
+
+  var rightIncongruentI = 'RightIncongruent.png';
+  var RightIncongruentImg = new Image();
+  RightIncongruentImg.src = rightIncongruentI;
+
+
+/*****************recording dimensions of screen *********************/
+
+height = screen.height
+width = screen.width
+
+
+fixationTop = 0.45 * height
+fixationBottom = 0.55 * height
+fixationLefttMost = 0.44* width 
+fixationRightMost = 0.48 * width
+fixationWidthStretch = fixationRightMost - fixationLefttMost
+fixationVerticalStretch = fixationBottom - fixationTop
+
+
+//leftRectangleWidths
+leftRectangleLeftMost = 0.2 * width;
+leftRectangleRightMost = 0.4 * width;
+//leftRectangleWidthStretch = leftRectangleRightMost - leftRectangleLeftMost ;
+leftRectangleWidthStretch = 218.88;
+
+//rightRectanglesWidths
+rightRectangleLeftMost = 0.6 * width;
+rightRectangleRightMost = 0.8 * width;
+//rightRectangleWidthStretch = rightRectangleRightMost - rightRectangleLeftMost;
+rightRectangleWidthStretch = 218.88;
+
+
+horizontalRectanglesTop = 0.45 * height;
+horizontalRectanglesBottom = 0.55 * height; 
+horizontalRectanglesVerticalStretch = horizontalRectanglesBottom - horizontalRectanglesTop;
+//horizontalRectanglesVerticalStretch = 109.44;
+
+/*****************recording dimensions of screen *********************/
+
+lineSize = 8
+
+
+
+
+
+
+
+
+/***** Experiment****************/
+/* **************defining the cue *********** */
+    var cue = {
+      type: "canvas-keyboard-response",
+      stimulus: 
+      function cue_creator(c) {
+          var ctx = c.getContext('2d');
+          c.height = window.innerHeight;
+          c.width = window.innerWidth;
+
+        if (jsPsych.timelineVariable('cue_type', true) == "none") {
+          ctx.strokeStyle = 'black';
+          ctx.lineWidth = lineSize;
+          ctx.drawImage(fixationImg, fixationLefttMost, fixationTop, fixationWidthStretch, fixationVerticalStretch)
+          ctx.strokeRect(leftRectangleLeftMost, horizontalRectanglesTop, leftRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+          ctx.strokeRect(rightRectangleLeftMost, horizontalRectanglesTop, rightRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+
+        }
+
+        if (jsPsych.timelineVariable('cue_type', true) == "double") {
+          ctx.strokeStyle = 'white';
+          ctx.lineWidth = lineSize;
+          ctx.drawImage(fixationImg, fixationLefttMost, fixationTop, fixationWidthStretch, fixationVerticalStretch)
+          ctx.strokeRect(leftRectangleLeftMost, horizontalRectanglesTop, leftRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+          ctx.strokeRect(rightRectangleLeftMost, horizontalRectanglesTop, rightRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+        }
+
+        if (jsPsych.timelineVariable('cue_type', true) == "spatial") {
+          if (jsPsych.timelineVariable('validity', true) == "validLeft" | jsPsych.timelineVariable('validity', true) == "invalidLeft") {
+              ctx.drawImage(fixationImg, fixationLefttMost, fixationTop, fixationWidthStretch, fixationVerticalStretch)
+              ctx.strokeStyle = 'white';
+              ctx.lineWidth = lineSize;
+              ctx.strokeRect(leftRectangleLeftMost, horizontalRectanglesTop, leftRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+              ctx.strokeStyle = 'black';
+              ctx.strokeRect(rightRectangleLeftMost, horizontalRectanglesTop, rightRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+          }
+          if (jsPsych.timelineVariable('validity', true) == "invalidRight" | jsPsych.timelineVariable('validity', true) == "validRight") {
+              ctx.drawImage(fixationImg, fixationLefttMost, fixationTop, fixationWidthStretch, fixationVerticalStretch)
+              ctx.strokeStyle = 'black';
+              ctx.lineWidth = lineSize;
+              ctx.strokeRect(leftRectangleLeftMost, horizontalRectanglesTop, leftRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+              ctx.strokeStyle = 'white';
+              ctx.strokeRect(rightRectangleLeftMost, horizontalRectanglesTop, rightRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+          }
+        }
+      },
+
+
+      choices: jsPsych.NO_KEYS,
+      trial_duration: function(){
+        return 100;
+      },
+      data: {test_part: 'cue'}
+    }
+
+var repetition_count = 0; 
+
+/* **************defining the test *********** */
+    var target = {
+      type: "canvas-keyboard-response",
+      choices: ['c', 'm'],
+      response_ends_trial: false,
+      trial_duration: 1500,
+      on_load: function() {
+        return console.log('The trial just finished loading.');
+      },
+        
+        /* setTimeout(function() {
+          var ctx = c.getContext('2d');
+          ctx.drawImage(instruction2a, rightRectangleLeftMost + lineSize, horizontalRectanglesTop + lineSize, rightRectangleWidthStretch - 2*lineSize, horizontalRectanglesVerticalStretch - 2*lineSize);
+          ctx.drawImage(clearRectangleImg, leftRectangleLeftMost + lineSize, horizontalRectanglesTop + lineSize, leftRectangleWidthStretch - 2*lineSize, horizontalRectanglesVerticalStretch - 2*lineSize);
+        }, 500) */
+      data: {
+        test_part: 'response',
+        cue_type: jsPsych.timelineVariable('cue_type')
+        correct_response: jsPsych.timelineVariable('correct_response'),
+        center_arrow_direction: jsPsych.timelineVariable('pointing'),
+        location: jsPsych.timelineVariable('location'),
+        location_congruency: jsPsych.timelineVariable('location_congruency'),
+        flanker_congruency: jsPsych.timelineVariable('flanker_congruency'),
+        validity: jsPsych.timelineVariable('validity')
+      },
+      on_finish: function(data){
+        data.correct = data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode(data.correct_response);
+      },  
+      stimulus: 
+      function task_creator(c) {
+        c.height = height;
+        c.width = width;
+        var ctx = c.getContext('2d');
+
+        ctx.drawImage(fixationImg, fixationLefttMost, fixationTop, fixationWidthStretch, fixationVerticalStretch)
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = lineSize;
+        ctx.strokeRect(leftRectangleLeftMost, horizontalRectanglesTop, leftRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+        ctx.strokeRect(rightRectangleLeftMost, horizontalRectanglesTop, rightRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+
+        if (jsPsych.timelineVariable('location', true) == "left") {
+          if (jsPsych.timelineVariable('pointing', true) == "left") { 
+            if (jsPsych.timelineVariable('flanker_congruency', true) == "true") {
+              ctx.drawImage(LeftCongruentImg, leftRectangleLeftMost + lineSize, horizontalRectanglesTop + lineSize, leftRectangleWidthStretch - 2*lineSize, horizontalRectanglesVerticalStretch - 2*lineSize);
+            } else if (jsPsych.timelineVariable('flanker_congruency', true) == "false") {
+                ctx.drawImage(RightIncongruentImg, leftRectangleLeftMost + lineSize, horizontalRectanglesTop + lineSize, leftRectangleWidthStretch - 2*lineSize, horizontalRectanglesVerticalStretch - 2*lineSize); }
+        } else if (jsPsych.timelineVariable('pointing', true) == "right") {
+              if (jsPsych.timelineVariable('flanker_congruency', true) == "true") {
+                ctx.drawImage(RightCongruentImg, leftRectangleLeftMost + lineSize, horizontalRectanglesTop + lineSize, leftRectangleWidthStretch - 2*lineSize, horizontalRectanglesVerticalStretch - 2*lineSize); 
+              } else if (jsPsych.timelineVariable('flanker_congruency', true) == "false") {
+                  ctx.drawImage(LeftIncongruentImg, leftRectangleLeftMost + lineSize, horizontalRectanglesTop + lineSize, leftRectangleWidthStretch - 2*lineSize, horizontalRectanglesVerticalStretch - 2*lineSize);
+              }
+          }
+        }
+        if (jsPsych.timelineVariable('location', true) == "right") {
+          if (jsPsych.timelineVariable('pointing', true) == "right") {
+            if (jsPsych.timelineVariable('flanker_congruency', true) == "true") {
+              ctx.drawImage(RightCongruentImg, rightRectangleLeftMost + lineSize, horizontalRectanglesTop + lineSize, rightRectangleWidthStretch - 2*lineSize, horizontalRectanglesVerticalStretch - 2*lineSize);
+            } else if (jsPsych.timelineVariable('flanker_congruency', true) == "false") {
+                ctx.drawImage(LeftIncongruentImg, rightRectangleLeftMost + lineSize, horizontalRectanglesTop + lineSize, rightRectangleWidthStretch - 2*lineSize, horizontalRectanglesVerticalStretch - 2*lineSize);}
+          } else if (jsPsych.timelineVariable('pointing', true) == "left") {
+              if (jsPsych.timelineVariable('flanker_congruency', true) == "true") {
+                ctx.drawImage(LeftCongruentImg, rightRectangleLeftMost + lineSize, horizontalRectanglesTop + lineSize, rightRectangleWidthStretch - 2*lineSize, horizontalRectanglesVerticalStretch - 2*lineSize);
+              } else if (jsPsych.timelineVariable('flanker_congruency', true) == "false") {
+                  ctx.drawImage(RightIncongruentImg, rightRectangleLeftMost + lineSize, horizontalRectanglesTop + lineSize, rightRectangleWidthStretch - 2*lineSize, horizontalRectanglesVerticalStretch - 2*lineSize);
+                }
+            }
+        }
+      } 
+  }
+
+  
+     // data: jsPsych.timelineVariable('data'),
+      //on_finish: function(data){
+        //
+    
+    var postTarget = {
+      type: "canvas-keyboard-response",
+      stimulus: 
+      function task_creator(c) {
+        c.height = height;
+        c.width = width;
+        var ctx = c.getContext('2d');
+          ctx.strokeStyle = 'black';
+          ctx.lineWidth = lineSize;
+          ctx.drawImage(fixationImg, fixationLefttMost, fixationTop, fixationWidthStretch, fixationVerticalStretch)
+          ctx.strokeRect(leftRectangleLeftMost, horizontalRectanglesTop, leftRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+          ctx.strokeRect(rightRectangleLeftMost, horizontalRectanglesTop, rightRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+        }, 
+      choices: jsPsych.NO_KEYS,
+      trial_duration: getRandomIntInclusive(1000, 3000),
+      data: {test_part: 'postTarget'}
+    }
+
+
+      var fixation = {
+      type: "canvas-keyboard-response",
+      stimulus: 
+
+
+
+      function task_creator(c) {
+        c.height = height;
+        c.width = width;
+        var ctx = c.getContext('2d');
+        ctx.drawImage(fixationImg, fixationLefttMost, fixationTop, fixationWidthStretch, fixationVerticalStretch)
+
+          ctx.strokeStyle = 'black';
+          ctx.lineWidth = lineSize;
+          ctx.strokeRect(leftRectangleLeftMost, horizontalRectanglesTop, leftRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+          ctx.strokeRect(rightRectangleLeftMost, horizontalRectanglesTop, rightRectangleWidthStretch, horizontalRectanglesVerticalStretch);
+        }, 
+        trial_duration: 400, // may be between 2,5
+      data: {test_part: 'fixation'} 
+    }
+
+
+      function timeline_creator() {
+        noneCongruent = [{cue_type: "none", location: "right", pointing: "right", flanker_congruency: "true", location_congruency: "true", correct_response: 'm'},
+        {cue_type: "none", location: "left", pointing: "left", flanker_congruency: "true",location_congruency: "true", correct_response: 'c' },
+        {cue_type: "none", location: "right", pointing: "left", flanker_congruency: "true", location_congruency: "false", correct_response: 'c' },
+        {cue_type: "none", location: "left", pointing: "right", flanker_congruency: "true",location_congruency: "false", correct_response: 'm'}]
+
+
+        noneIncongruent = [{cue_type: "none", location: "right", pointing: "right", flanker_congruency: "false", location_congruency: "true", correct_response: 'm'},
+        {cue_type: "none", location: "left", pointing: "left", flanker_congruency: "false",location_congruency: "true", correct_response: 'c'  },
+        {cue_type: "none", location: "right", pointing: "left", flanker_congruency: "false", location_congruency: "false", correct_response: 'c' },
+        {cue_type: "none", location: "left", pointing: "right", flanker_congruency: "false",location_congruency: "false", correct_response: 'm' }]
+
+        doubleCongruent = [{cue_type: "double", location: "right", pointing: "right", flanker_congruency: "true", location_congruency: "true", correct_response: 'm'},
+        {cue_type: "double", location: "left", pointing: "left", flanker_congruency: "true",location_congruency: "true", correct_response: 'c' },
+        {cue_type: "double", location: "right", pointing: "left", flanker_congruency: "true", location_congruency: "false", correct_response: 'c' },
+        {cue_type: "double", location: "left", pointing: "right", flanker_congruency: "true",location_congruency: "false", correct_response: 'm' }]
+
+
+        doubleIncongruent = [{cue_type: "double", location: "right", pointing: "right", flanker_congruency: "false", location_congruency: "true", correct_response: 'm'},
+        {cue_type: "double", location: "left", pointing: "left", flanker_congruency: "false",location_congruency: "true", correct_response: 'c' },
+        {cue_type: "double", location: "right", pointing: "left", flanker_congruency: "false", location_congruency: "false", correct_response: 'c' },
+        {cue_type: "double", location: "left", pointing: "right", flanker_congruency: "false",location_congruency: "false", correct_response: 'm' }]
+
+
+        spatialValid = [
+        {cue_type: "spatial", validity: "validLeft", location: "left", pointing: "left", flanker_congruency: "true", location_congruency: "true", correct_response: 'c' },
+        {cue_type: "spatial", validity: "validLeft", location: "left", pointing: "right", flanker_congruency: "true", location_congruency: "false", correct_response: 'm'},
+        {cue_type: "spatial", validity: "validLeft", location: "left", pointing: "left", flanker_congruency: "false", location_congruency: "true", correct_response: 'c' },
+        {cue_type: "spatial", validity: "validLeft", location: "left", pointing: "right", flanker_congruency: "false", location_congruency: "false", correct_response: 'm'},
+        {cue_type: "spatial", validity: "validRight", location: "right", pointing: "left", flanker_congruency: "true", location_congruency: "true", correct_response: 'c' },
+        {cue_type: "spatial", validity: "validRight", location: "right", pointing: "right", flanker_congruency: "true", location_congruency: "false", correct_response: 'm'},
+        {cue_type: "spatial", validity: "validRight", location: "right", pointing: "left", flanker_congruency: "false", location_congruency: "true", correct_response: 'c' },
+        {cue_type: "spatial", validity: "validRight", location: "right", pointing: "right", flanker_congruency: "false", location_congruency: "false", correct_response: 'm'}]
+
+        
+        spatialInvalid = [
+        {cue_type: "spatial", validity: "invalidLeft", location: "right", pointing: "left", flanker_congruency: "true", location_congruency: "true", correct_response: 'c' },
+        {cue_type: "spatial", validity: "invalidLeft", location: "right", pointing: "right", flanker_congruency: "true", location_congruency: "false", correct_response: 'm'},
+        {cue_type: "spatial", validity: "invalidLeft", location: "right", pointing: "left", flanker_congruency: "false", location_congruency: "true", correct_response: 'c' },
+        {cue_type: "spatial", validity: "invalidLeft", location: "right", pointing: "right", flanker_congruency: "false", location_congruency: "false", correct_response: 'm'},
+        {cue_type: "spatial", validity: "invalidRight", location: "left", pointing: "left", flanker_congruency: "true", location_congruency: "true", correct_response: 'c' },
+        {cue_type: "spatial", validity: "invalidRight", location: "left", pointing: "right", flanker_congruency: "true", location_congruency: "false", correct_response: 'm'},
+        {cue_type: "spatial", validity: "invalidRight", location: "left", pointing: "left", flanker_congruency: "false", location_congruency: "true", correct_response: 'c' },
+        {cue_type: "spatial", validity: "invalidRight", location: "left", pointing: "right", flanker_congruency: "false", location_congruency: "false", correct_response: 'm'}]
+
+
+        function getRandomInt(min, max) {
+          min = Math.ceil(min);
+          max = Math.floor(max);
+          return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function timeline_distributor(arrayCueType, size) {
+          var toTimeline = new Array();
+          arrayLength = arrayCueType.length - 1;
+          for (i = 0; i <= size - 1; i++) {
+            toTimeline.push(arrayCueType[getRandomInt(0, arrayLength)])
+          }
+          return toTimeline
+        }
+
+        noneCongruentTrials = timeline_distributor(noneCongruent, 8) //8
+        noneIncongruentTrials = timeline_distributor(noneIncongruent, 8) //8   
+        doubleCongruentTrials = timeline_distributor(doubleCongruent, 8)  //8
+        doubleIncongruentTrials = timeline_distributor(doubleIncongruent, 8) //8
+        spatialValidTrials = timeline_distributor(spatialValid, 12) //12
+        spatialInvalidTrials = timeline_distributor(spatialInvalid, 4) //4
+
+
+          trials = noneCongruentTrials.concat(noneIncongruentTrials, doubleCongruentTrials, doubleIncongruentTrials, spatialValidTrials, spatialInvalidTrials)
+          console.log("trials = " + trials)
+          return trials;
+        
+      }
+      var temporaryTrials = timeline_creator()
+
+
+/******** feedback for practice trials **********/
+    var feedback = {
+      type: 'html-keyboard-response',
+      stimulus: function(){
+        // The feedback stimulus is a dynamic parameter because we can't know in advance whether
+        // the stimulus should be 'correct' or 'incorrect'.
+        // Instead, this function will check the accuracy of the last response and use that information to set
+        // the stimulus value on each trial.
+        var last_trial_correct1 = jsPsych.data.get().filter({test_part: 'response'})
+        console.log(last_trial_correct1)
+        var last_trial_correct2 = last_trial_correct1.filter({test_part: 'response'})
+        console.log(last_trial_correct2)
+        var last_trial_correct3 = last_trial_correct2.last(1).values()[0].response == last_trial_correct2.last(1).values()[0].correct_response
+        console.log(last_trial_correct3)
+        
+        if(last_trial_correct3) {
+          return "<p>Correct!</p>"; // the parameter value has to be returned from the function
+        } else if(last_trial_correct2.last(1).values()[0].response == null) {
+          return '<img src = "feedbacka.png" width = "50" height = "150"; style = text-align:center';   
+        } else {
+          return '<img src = "feedbackb.png" width = "50" height = "150"; style = text-align:center' 
+        }
+      }
+    }
+
+/* ****************define welcome message trial *********/
+
+
+    var welcome = {
+      type: "html-keyboard-response",
+      stimulus: "Welcome to the experiment. Press any key to begin.",
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+
+    };
+          timeline.push(welcome);
+          
+
+/* **************define instructions trial*********** */
+    var instruction1 = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> During the experiment you will see two rectangles.</p>
+      <img src = "instruction1.png" width = "600" height = "400" style = "border: 5px solid black; text-align:center"`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction1);
+
+    var instruction2 = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> After a brief period of time, five arrows will appear in one of the rectangles. </p>
+      <img src = "instruction2.png" width = "600" height = "400k" style = "border: 5px solid black; text-align:center;"`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction2);
+
+
+    var instruction2a = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> The arrows can appear within the left rectangle or the right rectangle. </p>
+      <img src="instruction2a.png" width = "600" height = "400" style ="border: 5px solid black; margin: 0px 50px 0px 0px;"  /><img src="instruction2.png" width = "600" height = "400" style ="border: 5px solid black; margin: 50px 0px 0px 0px;"/>`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction2a);
+
+    var instruction3 = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> You will focus on the direction of the middle arrow </p>
+      <img src = "Instruction3.png" width = "600" height = "400" style = "border: 5px solid black; text-align:center;"`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction3);
+
+
+     var instruction4 = {
+      type: "html-keyboard-response",
+      stimulus:  '<p> If the middle arrow is pointing to the left you will press c on your keyboard. If the middle arrow is pointing to the right you will press m on your keyboard. </p><img src="instruction4a.png" width = "600" height = "400" style ="border: 5px solid black; margin: 0px 50px 0px 0px;"  /><img src="instruction4b.png" width = "600" height = "400" style ="border: 5px solid black; margin: 50px 0px 0px 0px;"/>'
+
+
+/*
+
+      `<p> You will focus on the direction of the middle arrow </p>
+      <img src = "instruction4a.png" width = "600" height = "400k" style = "border: 5px solid black; float: left;/><img src = "instruction4b.png" width = "600" height = "400k" style = "border: 5px solid black; float: right; />"`
+
+      */
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction4); 
+
+
+    var instruction5 = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> It is possible that the arrows surrounding the middle arrow are not pointing in the same direction as the middle arrow. You will focus only on the direction of the middle arrow, regardless of whether these surrounding arrows are pointing in the same direction. </p>
+      <img src = "Instruction5.png" width = "600" height = "400" style = "border: 5px solid black; text-align:center;"`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction5);
+
+
+    var instruction6a = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> It is also possible that the direction of the middle arrow and surrounding arrows do not match the location of the rectangle.  </p>`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction6a);
+
+
+    var instruction6b = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> Sometimes arrows are pointing to the right but are located within the left rectangle.  </p>
+      <img src = "instruction6b.png" width = "600" height = "400" style = "border: 5px solid black; text-align:center;"`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction6b);
+
+
+
+    var instruction6c = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> Sometimes arrows are pointing to the left but are located within the right rectangle.   </p>
+      <img src = "instruction6c.png" width = "600" height = "400" style = "border: 5px solid black; text-align:center;"`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction6c);
+
+
+
+    var instruction6d = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> You will only focus on the direction of the middle arrow, regardless of which rectangle the arrows are located within. </p>
+      <img src = "instruction6d.png" width = "600" height = "400" style = "border: 5px solid black; text-align:center;"`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction6d);
+
+
+
+
+    var instruction6 = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> You will now answer some multiple choice questions to show that you understand the experiment.  </p>`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction6);
+
+
+    var instruction7 = {
+      type: 'survey-multi-choice',
+      questions: [
+      {prompt: "What do you focus on to decide which key to press?", name: 'which key', options: ["The direction of the middle arrow", "Whether the arrows are in the left or right rectangle", "The direction of the surrounding arrows"], required:true},
+      {prompt: "Which arrow are you focusing on?", name: 'which arrow', options: ["The first arrow", "The middle arrow", "I’m not focusing on an individual arrow. I’m focusing on all of the arrows directions"], required:true}, 
+      ],
+    };
+
+    timeline.push(instruction7);
+
+
+    var instruction8 = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> You will now have a chance to practice. Please try to respond as quickly and accurately as you can.  </p>`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction8);
+    
+    
+    /**** practice trials ********/ 
+    var feedback = {
+      type: 'html-keyboard-response',
+      stimulus: function(){
+        // The feedback stimulus is a dynamic parameter because we can't know in advance whether
+        // the stimulus should be 'correct' or 'incorrect'.
+        // Instead, this function will check the accuracy of the last response and use that information to set
+        // the stimulus value on each trial.
+        var last_trial_correct1 = jsPsych.data.get().filter({test_part: 'target'})
+        console.log(last_trial_correct1)
+        var last_trial_correct2 = last_trial_correct1.filter({test_part: 'target'})
+        console.log(last_trial_correct2)
+        var last_trial_correct3 = last_trial_correct2.last(1).values()[0].response == last_trial_correct2.last(1).values()[0].correct_response
+        console.log(last_trial_correct3)
+        
+        if(last_trial_correct3) {
+          return "<p>Correct!</p>"; // the parameter value has to be returned from the function
+        } else if(last_trial_correct2.last(1).values()[0].response == null) {
+          return `<img src = "feedbackb.png"; text-align:center;"`;   
+        } else {
+          return `<img src = "feedbacka.png"; text-align:center;"`
+        }
+      }
+    }
+    
+    
+    var practice1 = [{cue_type: "none", location: "right", pointing: "right", flanker_congruency: "true", location_congruency: "true", correct_response: 'm'},
+        {cue_type: "none", location: "left", pointing: "left", flanker_congruency: "true",location_congruency: "true", correct_response: 'c' },
+        {cue_type: "none", location: "right", pointing: "left", flanker_congruency: "true", location_congruency: "false", correct_response: 'c'},
+        {cue_type: "none", location: "left", pointing: "right", flanker_congruency: "true",location_congruency: "false", correct_response: 'm'},
+       {cue_type: "none", location: "right", pointing: "right", flanker_congruency: "false", location_congruency: "true", correct_response: 'm'},
+        {cue_type: "none", location: "left", pointing: "left", flanker_congruency: "false",location_congruency: "true", correct_response: 'c'},
+        {cue_type: "none", location: "right", pointing: "left", flanker_congruency: "false", location_congruency: "false", correct_response: 'c'},
+        {cue_type: "none", location: "left", pointing: "right", flanker_congruency: "false",location_congruency: "false", correct_response: 'm' }]
+        
+    
+    var practice1_procedure = {
+      timeline: [cue, fixation, target, postTarget, feedback, postTarget],
+      
+      timeline_variables: practice1,
+      repetitions: 1,
+      randomize_order: false
+    };
+  
+   timeline.push(practice1_procedure);
+
+
+    var instruction9 = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> Right before each trial, you're going to receive one of three cues. </p>`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction9);
+
+
+    var instruction9a = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> Sometimes, you won’t get any cue, just like you practiced before.  </p>
+      <img src = "instruction1.png" width = "600" height = "400" style = "border: 5px solid black; text-align:center;"`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction6d);
+
+
+    var instruction9b = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> Sometimes, both of the rectangles will be cued, telling you when the trial is about to begin.  </p>
+      <img src = "instruction9b.png" width = "600" height = "400" style = "border: 5px solid black; text-align:center;"`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction9b);
+    
+    
+    
+  var instruction10a = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> Finally, sometimes one rectangle will be cued. The cued rectangle is probably where the arrows will be, but not always.</p>
+      <img src="instruction12a.png" width = "1100" height = "700"; style = "border: 2px solid black; margin: 0x 20px 0px 0px;"`
+       ,
+      choices: jsPsych.ALL_KEYS, 
+      response_ends_trial: true,
+    };
+    timeline.push(instruction10a);
+
+    var instruction9c = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> Let’s try a couple trials to see what that’s like </p>`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction9c);
+
+
+var practice2 = [{cue_type: "double", location: "right", pointing: "right", flanker_congruency: "true", location_congruency: "true", correct_response: 'm'},
+        {cue_type: "double", location: "left", pointing: "left", flanker_congruency: "true",location_congruency: "true", correct_response: 'c' },
+        {cue_type: "double", location: "right", pointing: "left", flanker_congruency: "true", location_congruency: "false", correct_response: 'c' },
+        {cue_type: "double", location: "left", pointing: "right", flanker_congruency: "true",location_congruency: "false", correct_response: 'm' }, 
+        {cue_type: "none", location: "right", pointing: "right", flanker_congruency: "true", location_congruency: "true", correct_response: 'm'},
+        {cue_type: "none", location: "left", pointing: "left", flanker_congruency: "true",location_congruency: "true", correct_response: 'c' },
+        {cue_type: "none", location: "right", pointing: "left", flanker_congruency: "true", location_congruency: "false", correct_response: 'c' },
+        {cue_type: "none", location: "left", pointing: "right", flanker_congruency: "true",location_congruency: "false", correct_response: 'm'},
+        {cue_type: "spatial", validity: "validRight", location: "right", pointing: "right", flanker_congruency: "true", location_congruency: "true", correct_response: 'm'},
+        {cue_type: "spatial", validity: "validLeft", location: "left", pointing: "left", flanker_congruency: "true", location_congruency: "true", correct_response: 'c'},
+        {cue_type: "spatial", validity: "validLeft", location: "left", pointing: "left", flanker_congruency: "true", location_congruency: "true", correct_response: 'c'},
+        {cue_type: "spatial", validity: "validRight", location: "right", pointing: "right", flanker_congruency: "true", location_congruency: "true", correct_response: 'm'},
+        {cue_type: "spatial", validity: "validLeft", location: "left", pointing: "left", flanker_congruency: "true", location_congruency: "true", correct_response: 'c'},
+        {cue_type: "spatial", validity: "invalidLeft", location: "right", pointing: "right", flanker_congruency: "true", location_congruency: "true", correct_response: 'm'},
+        {cue_type: "spatial", validity: "validRight", location: "right", pointing: "right", flanker_congruency: "true", location_congruency: "true", correct_response: 'm'},
+        {cue_type: "spatial", validity: "invalidRight", location: "left", pointing: "left", flanker_congruency: "true", location_congruency: "true", correct_response: 'c'},
+        {cue_type: "spatial", validity: "validLeft", location: "left", pointing: "left", flanker_congruency: "true", location_congruency: "true", correct_response: 'c'},
+        {cue_type: "spatial", validity: "validLeft", location: "left", pointing: "left", flanker_congruency: "true", location_congruency: "true", correct_response: 'c'}]
+
+    var practice2_procedure = {
+      timeline: [cue, fixation, target, postTarget, feedback, postTarget],
+      timeline_variables: practice2,
+      repetitions: 1,
+      randomize_order: true
+    };
+    
+  
+   timeline.push(practice2_procedure);
+   
+   
+  var instruction8 = {
+      type: "html-keyboard-response",
+      stimulus: 
+      `<p> You will now begin the experiment. You will complete 8 blocks of trials.  </p>`
+       ,
+      choices: jsPsych.ALL_KEYS,
+      response_ends_trial: true,
+    };
+    timeline.push(instruction8);
+
+
+    
+    
+    
+
+
+
+/* **************defining the test procedure *********** */
+    var test_procedure = {
+      timeline: [cue, fixation, target, postTarget],
+      timeline_variables: temporaryTrials,
+      repetitions: 1,
+      randomize_order: true,
+    }
+
+
+   /* **************defining the debrief *********** */
+var debrief_block = {
+  type: "html-keyboard-response",
+  stimulus: function() {
+
+    var trials = jsPsych.data.get().filter({test_part: 'target'}).last(48);
+    var correct_trials = trials.filter({correct: true});
+    var accuracy = Math.round(correct_trials.count() / trials.count() * 100);
+    var rt = Math.round(jsPsych.data.get().filter({test_part: 'target'}).last(1).select('rt').subset(function(x){ return x != NaN || x!= 0;}).mean());
+    
+    return `<p>You just finished block ${repetition_count}. You responded correctly on ${accuracy}% of the trials.</p>
+      <p>Your average response time was ${rt}ms.</p>
+      <p>Press any key to continue to the next block</p>`;
+
+  }
+};
+
+  var block = { 
+    timeline: [test_procedure, debrief_block],
+    repetitions: 8, 
+    on_timeline_start: function() {
+        repetition_count++;
+    }
+}
+  timeline.push(block);
+
+
+  
+
+
+
+
+
+
+
+
+
+    /* *********start the experiment ***********/
+    jsPsych.init({
+      timeline: timeline,
+      on_finish: function() {
+        jsPsych.data.displayData();
+      }
+    });
